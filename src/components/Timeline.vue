@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const periods = ["Today", "This Week", "This Month"];
-const currentPeriod = ref("Today");
+const periods = ["Today", "This Week", "This Month"] as const;
+type Period = typeof periods[number];
 
-function selectPeriod(period: string) {
+const currentPeriod = ref<Period>("Today");
+
+function selectPeriod(period: Period) {
   currentPeriod.value = period;
 }
 </script>
