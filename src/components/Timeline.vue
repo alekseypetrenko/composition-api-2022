@@ -3,6 +3,9 @@ import { DateTime } from "luxon";
 import { ref, computed } from "vue";
 import { TimelinePost, today, thisWeek, thisMonth } from "../posts";
 import TimelineItem from "./TimelineItem.vue";
+import { usePosts } from "../stores/posts";
+
+const postStore = usePosts();
 
 const periods = ["Today", "This Week", "This Month"] as const;
 type Period = typeof periods[number];
@@ -14,8 +17,14 @@ function selectPeriod(period: Period) {
 }
 
 const posts = computed<TimelinePost[]>(() => {
-  return [today, thisWeek, thisMonth]
-    .map((post) => {
+  return postStore.ids
+    .map((id) => {
+      const post = postStore.all.get(id);
+
+      if (!post) {
+        throw Error(`Post with id ${id} was expected but not found`);
+      }
+
       return {
         ...post,
         created: DateTime.fromISO(post.created),
