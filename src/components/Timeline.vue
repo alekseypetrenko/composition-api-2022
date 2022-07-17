@@ -1,47 +1,9 @@
 <script setup lang="ts">
-import { DateTime } from "luxon";
-import { ref, computed } from "vue";
-import { TimelinePost, today, thisWeek, thisMonth } from "../posts";
 import TimelineItem from "./TimelineItem.vue";
 import { usePosts } from "../stores/posts";
+import { periods } from "../constants";
 
 const postStore = usePosts();
-
-const periods = ["Today", "This Week", "This Month"] as const;
-type Period = typeof periods[number];
-
-const selectedPeriod = ref<Period>("Today");
-
-function selectPeriod(period: Period) {
-  selectedPeriod.value = period;
-}
-
-const posts = computed<TimelinePost[]>(() => {
-  return postStore.ids
-    .map((id) => {
-      const post = postStore.all.get(id);
-
-      if (!post) {
-        throw Error(`Post with id ${id} was expected but not found`);
-      }
-
-      return {
-        ...post,
-        created: DateTime.fromISO(post.created),
-      };
-    })
-    .filter((post) => {
-      if (selectedPeriod.value === "Today") {
-        return post.created >= DateTime.now().minus({ day: 1 });
-      }
-
-      if (selectedPeriod.value === "This Week") {
-        return post.created >= DateTime.now().minus({ week: 1 });
-      }
-
-      return post;
-    });
-});
 </script>
 
 <template>
@@ -50,12 +12,16 @@ const posts = computed<TimelinePost[]>(() => {
       <a
         v-for="period in periods"
         :key="period"
-        :class="{ 'is-active': period === selectedPeriod }"
-        @click="selectPeriod(period)"
+        :class="{ 'is-active': period === postStore.selectedPeriod }"
+        @click="postStore.setSelectedPeriod(period)"
         >{{ period }}</a
       >
     </span>
 
-    <TimelineItem v-for="post of posts" :key="post.id" :post="post" />
+    <TimelineItem
+      v-for="post of postStore.filteredPosts"
+      :key="post.id"
+      :post="post"
+    />
   </nav>
 </template>
