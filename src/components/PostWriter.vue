@@ -14,6 +14,14 @@
     </div>
     <div class="column" v-html="html" />
   </div>
+
+  <div class="columns">
+    <div class="column">
+      <button class="button is-primary is-pulled-right" @click="handleClick">
+        Save Post
+      </button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -22,6 +30,8 @@ import { TimelinePost } from "../posts";
 import { marked } from "marked";
 import highlightjs from "highlight.js";
 import debounce from "lodash/debounce";
+import { usePosts } from "../stores/posts";
+import { useRouter } from "vue-router";
 
 const props = defineProps<{
   post: TimelinePost;
@@ -29,8 +39,11 @@ const props = defineProps<{
 
 const title = ref(props.post.title);
 const content = ref(props.post.markdown);
-const contentEditable = ref<HTMLDivElement>();
 const html = ref();
+const contentEditable = ref<HTMLDivElement>();
+
+const posts = usePosts();
+const router = useRouter();
 
 function parseHtml(markdown: string) {
   marked.parse(
@@ -46,6 +59,18 @@ function parseHtml(markdown: string) {
       html.value = parseResult;
     },
   );
+}
+
+async function handleClick() {
+  const newPost: TimelinePost = {
+    ...props.post,
+    title: title.value,
+    markdown: content.value,
+    html: html.value,
+  };
+
+  await posts.createPost(newPost);
+  router.push("/");
 }
 
 watch(
