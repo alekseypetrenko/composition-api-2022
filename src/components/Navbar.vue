@@ -8,11 +8,14 @@
     </div>
   </div>
 
-  <Teleport to="#modal"> test teleport</Teleport>
+  <Teleport to="#modal">
+    <SignupForm />
+  </Teleport>
 </template>
 
 <script lang="ts" setup>
 import { useModal } from "../composable/modal";
+import SignupForm from "./SignupForm.vue";
 
 const modal = useModal();
 </script>
