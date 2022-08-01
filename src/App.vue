@@ -10,19 +10,16 @@
 
   <div class="secttion">
     <div class="container">
-      <form-input name="Username" v-model="username" />
       <navbar />
       <router-view />
-      {{ username }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import Navbar from "./components/Navbar.vue";
-import FormInput from "./components/FormInput.vue";
 import { useModal } from "./composable/modal";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 
 const modal = useModal();
 
@@ -31,8 +28,6 @@ const modalStyle = computed(() => {
     display: modal.show.value ? "block" : "none",
   };
 });
-
-const username = ref("");
 </script>
 
 <style>

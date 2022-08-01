@@ -12,13 +12,18 @@
         @input="handleInput"
       />
     </div>
+
+    <p class="is-danger help" v-if="!status.valid">{{ status.message }}</p>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { Status } from "../validations.js";
+
 defineProps<{
   name: string;
   modelValue: string;
+  status: Status;
 }>();
 
 const emit = defineEmits<{
