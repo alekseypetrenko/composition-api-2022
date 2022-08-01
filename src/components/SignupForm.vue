@@ -1,7 +1,17 @@
 <template>
   <form class="form" @submit.prevent="handleSubmit">
-    <form-input name="Username" v-model="username" :status="usernameStatus" />
-    <form-input name="Password" v-model="password" :status="passwordStatus" />
+    <form-input
+      type="text"
+      name="Username"
+      v-model="username"
+      :status="usernameStatus"
+    />
+    <form-input
+      type="password"
+      name="Password"
+      v-model="password"
+      :status="passwordStatus"
+    />
     <button class="button" :disabled="isInvalid">Submit</button>
   </form>
 </template>
@@ -11,6 +21,8 @@ import FormInput from "./FormInput.vue";
 import { computed, ref } from "vue";
 import { validate, required, length } from "../validations";
 import { NewUser } from "../users";
+import { useUsers } from "../stores/users";
+import { useModal } from "../composable/modal";
 
 const username = ref("");
 const password = ref("");
@@ -27,14 +39,23 @@ const isInvalid = computed(() => {
   return !usernameStatus.value.valid || !passwordStatus.value.valid;
 });
 
-function handleSubmit() {
-  if (!isInvalid.value) {
+const usersStore = useUsers();
+const modal = useModal();
+
+async function handleSubmit() {
+  if (isInvalid.value) {
     return;
   }
   const newUser: NewUser = {
     username: username.value,
     password: password.value,
   };
+
+  try {
+    await usersStore.createUser(newUser);
+  } catch (error) {}
+
+  modal.hideModal();
 }
 </script>
 

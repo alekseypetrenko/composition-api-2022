@@ -5,7 +5,7 @@
     </label>
     <div class="control">
       <input
-        type="text"
+        :type="type"
         :id="name"
         class="input"
         :value="modelValue"
@@ -24,6 +24,7 @@ defineProps<{
   name: string;
   modelValue: string;
   status: Status;
+  type: string;
 }>();
 
 const emit = defineEmits<{
