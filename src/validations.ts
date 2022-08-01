@@ -39,8 +39,3 @@ export function validate(value: string, rules: Rule[]): Status {
     valid: true,
   };
 }
-
-console.log(
-  validate("", [required, length({ min: 5, max: 10 })]),
-  validate("testsa werftregttgt", [required, length({ min: 5, max: 10 })]),
-);
