@@ -2,7 +2,7 @@
   <div class="navbar">
     <div class="navbar-end">
       <div v-if="usersStore.currentUserId" class="buttons">
-        <button class="button" @click="modal.showModal()">Log Out</button>
+        <button class="button" @click="usersStore.logout()">Log Out</button>
         <RouterLink to="/post/new" class="button">New Post</RouterLink>
       </div>
 
