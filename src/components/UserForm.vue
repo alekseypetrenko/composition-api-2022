@@ -13,6 +13,7 @@
       :status="passwordStatus"
     />
     <button class="button" :disabled="isInvalid">Submit</button>
+    <div v-if="error" class="is-danger help">{{ error }}</div>
   </form>
 </template>
 
@@ -24,6 +25,10 @@ import { NewUser } from "../users";
 
 const emit = defineEmits<{
   (event: "submit", payload: NewUser): void;
+}>();
+
+defineProps<{
+  error?: string;
 }>();
 
 const username = ref("");
