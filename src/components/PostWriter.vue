@@ -32,6 +32,9 @@ import highlightjs from "highlight.js";
 import debounce from "lodash/debounce";
 import { usePosts } from "../stores/posts";
 import { useRouter } from "vue-router";
+import { useUsers } from "../stores/users";
+
+const userStore = useUsers();
 
 const props = defineProps<{
   post: TimelinePost | Post;
@@ -62,11 +65,20 @@ function parseHtml(markdown: string) {
 }
 
 async function handleClick() {
-  const newPost: TimelinePost = {
+  if (!userStore.currentUserId) {
+    throw Error("USer was not find");
+  }
+
+  const newPost: Post = {
     ...props.post,
+    created:
+      typeof props.post.created === "string"
+        ? props.post.created
+        : props.post.created.toISO(),
     title: title.value,
     markdown: content.value,
     html: html.value,
+    authorId: userStore.currentUserId,
   };
 
   await posts.createPost(newPost);
