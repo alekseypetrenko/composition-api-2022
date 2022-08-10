@@ -1,18 +1,52 @@
 import { defineStore } from "pinia";
-import { NewUser } from "../users";
+import { NewUser, User } from "../users";
+
+interface UserState {
+  currentUserId?: string;
+}
 
 export const useUsers = defineStore("users", {
+  state: (): UserState => ({
+    currentUserId: undefined,
+  }),
   actions: {
-    createUser(newUser: NewUser) {
+    async authenticate() {
+      try {
+        const res = await window.fetch("/api/current-user", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const result = await res.json();
+        this.currentUserId = result;
+      } catch (error) {
+        this.currentUserId = undefined;
+      }
+    },
+
+    async logout() {
+      await window.fetch("/api/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      return this.authenticate();
+    },
+    async createUser(newUser: NewUser) {
       const body = JSON.stringify(newUser);
 
-      return fetch("http://localhost:8000/users", {
+      await window.fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body,
       });
+
+      return this.authenticate();
     },
   },
 });

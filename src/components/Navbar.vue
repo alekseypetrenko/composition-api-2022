@@ -1,21 +1,31 @@
 <template>
   <div class="navbar">
     <div class="navbar-end">
-      <div class="buttons">
-        <button class="button" @click="modal.showModal()">Sign Up</button>
+      <div v-if="usersStore.currentUserId" class="buttons">
+        <button class="button" @click="usersStore.logout()">Log Out</button>
         <RouterLink to="/post/new" class="button">New Post</RouterLink>
+      </div>
+
+      <div v-else class="buttons">
+        <button class="button" @click="modal.showModal('signUp')">
+          Sign Up
+        </button>
+        <button class="button" @click="modal.showModal('signIn')">
+          Sign In
+        </button>
       </div>
     </div>
   </div>
 
   <Teleport to="#modal">
-    <SignupForm />
+    <component :is="modal.component.value" />
   </Teleport>
 </template>
 
 <script lang="ts" setup>
 import { useModal } from "../composable/modal";
-import SignupForm from "./SignupForm.vue";
+import { useUsers } from "../stores/users";
 
 const modal = useModal();
+const usersStore = useUsers();
 </script>
