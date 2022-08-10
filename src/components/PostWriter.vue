@@ -26,15 +26,22 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch } from "vue";
-import { TimelinePost } from "../posts";
+import { Post, TimelinePost } from "../posts";
 import { marked } from "marked";
 import highlightjs from "highlight.js";
 import debounce from "lodash/debounce";
 import { usePosts } from "../stores/posts";
 import { useRouter } from "vue-router";
+import { useUsers } from "../stores/users";
+
+const userStore = useUsers();
 
 const props = defineProps<{
-  post: TimelinePost;
+  post: TimelinePost | Post;
+}>();
+
+const emit = defineEmits<{
+  (event: "submit", post: Post): void;
 }>();
 
 const title = ref(props.post.title);
@@ -62,15 +69,23 @@ function parseHtml(markdown: string) {
 }
 
 async function handleClick() {
-  const newPost: TimelinePost = {
+  if (!userStore.currentUserId) {
+    throw Error("USer was not find");
+  }
+
+  const newPost: Post = {
     ...props.post,
+    created:
+      typeof props.post.created === "string"
+        ? props.post.created
+        : props.post.created.toISO(),
     title: title.value,
     markdown: content.value,
     html: html.value,
+    authorId: userStore.currentUserId,
   };
 
-  await posts.createPost(newPost);
-  router.push("/");
+  emit("submit", newPost);
 }
 
 watch(

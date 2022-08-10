@@ -2,7 +2,7 @@
   <div class="navbar">
     <div class="navbar-end">
       <div v-if="usersStore.currentUserId" class="buttons">
-        <button class="button" @click="usersStore.logout()">Log Out</button>
+        <button class="button" @click="logout()">Log Out</button>
         <RouterLink to="/post/new" class="button">New Post</RouterLink>
       </div>
 
@@ -23,9 +23,16 @@
 </template>
 
 <script lang="ts" setup>
+import { useRouter } from "vue-router";
 import { useModal } from "../composable/modal";
 import { useUsers } from "../stores/users";
+const router = useRouter();
 
 const modal = useModal();
 const usersStore = useUsers();
+
+async function logout() {
+  await usersStore.logout();
+  router.push({ path: "/" });
+}
 </script>
