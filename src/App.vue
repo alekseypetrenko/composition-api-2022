@@ -8,7 +8,7 @@
     <button class="modal-close is-large" @click="modal.hideModal()"></button>
   </div>
 
-  <div class="secttion">
+  <div class="section">
     <div class="container">
       <navbar />
       <router-view />
